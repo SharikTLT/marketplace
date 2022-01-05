@@ -1,0 +1,1 @@
+INSERT INTO product (`name`, `desc`, `base_price`) VALUES ('Prod 1', 'Desc 1', 1001),('Prod 2', 'Desc 2', 2002),('Prod 3', 'Desc 3', 3003),('Prod 4', 'Desc 4', 4004),('Prod 5', 'Desc 5', 5005),('Prod 6', 'Desc 6', 6006),('Prod 7', 'Desc 7', 7007),('Prod 8', 'Desc 8', 8008),('Prod 9', 'Desc 9', 9009),('Prod 10', 'Desc 10', 1010);

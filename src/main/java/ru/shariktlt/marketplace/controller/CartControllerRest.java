@@ -6,6 +6,10 @@ import ru.shariktlt.marketplace.controller.dto.SetCartRequest;
 import ru.shariktlt.marketplace.model.CartItem;
 import ru.shariktlt.marketplace.services.CartService;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
+import java.util.UUID;
+
 @RestController
 @RequestMapping("/rest/cart")
 public class CartControllerRest {
@@ -14,9 +18,12 @@ public class CartControllerRest {
     private CartService service;
 
     @GetMapping("/")
-    public Iterable<CartItem> index(@CookieValue(name = "cartId", required = false) String cartId) {
+    public Iterable<CartItem> index(@CookieValue(name = "cartId", required = false) String cartId, HttpServletResponse response) {
         if (cartId == null) {
-            cartId = "demo";
+            cartId = UUID.randomUUID().toString();
+            Cookie cookie = new Cookie("cartId", cartId);
+            cookie.setPath("/");
+            response.addCookie(cookie);
         }
         return service.getCartItems(cartId);
     }

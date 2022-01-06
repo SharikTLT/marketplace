@@ -20,7 +20,7 @@ public class CartService {
     private ProductRepository repositoryProduct;
 
     public Iterable<CartItem> getCartItems(String id){
-        return repository.findByIdId(id);
+        return repository.findByPkId(id);
     }
 
     public void set(String cartId, SetCartRequest request) {
@@ -31,7 +31,7 @@ public class CartService {
         }
 
         CartItem item = new CartItem();
-        item.setId(new CartItem.CartItemId(cartId, product.get().getId()));
+        item.setPk(new CartItem.CartItemId(cartId, product.get().getId()));
         item.setCount(request.getCount());
         item.setProduct(product.get());
 
@@ -46,7 +46,7 @@ public class CartService {
 
     public void removeAll(String cartId) {
 
-        repository.deleteById(cartId);
+        repository.deleteAllByPkId(cartId);
     }
 
 }

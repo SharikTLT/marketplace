@@ -8,7 +8,7 @@ import java.util.Objects;
 public class CartItem {
 
     @EmbeddedId
-    private CartItemId id;
+    private CartItemId pk;
 
     @MapsId("productId")
     @ManyToOne(optional = true)
@@ -17,12 +17,12 @@ public class CartItem {
 
     private long count;
 
-    public CartItemId getId() {
-        return id;
+    public CartItemId getPk() {
+        return pk;
     }
 
-    public void setId(CartItemId id) {
-        this.id = id;
+    public void setPk(CartItemId pk) {
+        this.pk = pk;
     }
 
     public Product getProduct() {
@@ -46,12 +46,12 @@ public class CartItem {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         CartItem cartItem = (CartItem) o;
-        return count == cartItem.count && Objects.equals(id, cartItem.id);
+        return count == cartItem.count && Objects.equals(pk, cartItem.pk);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, count);
+        return Objects.hash(pk, count);
     }
 
     @Embeddable

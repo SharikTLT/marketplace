@@ -5,8 +5,6 @@ import org.springframework.stereotype.Service;
 import ru.shariktlt.marketplace.model.Product;
 import ru.shariktlt.marketplace.storage.repository.ProductRepository;
 
-import java.util.List;
-
 @Service
 public class ProductService {
 
@@ -16,5 +14,9 @@ public class ProductService {
 
     public Iterable<Product> getProducts(){
         return productRepository.findAll();
+    }
+
+    public Product getProduct(Long id) {
+        return productRepository.findById(id).orElseThrow(IllegalArgumentException::new);
     }
 }

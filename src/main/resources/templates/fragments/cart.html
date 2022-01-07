@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html
+        xmlns:th="http://www.thymeleaf.org"
+        lang="en">
+<head></head>
+<body>
+<div th:fragment="cartItem(productId)" class="cart-item m-3" th:attr="data-id=${productId}">
+        <div class="cart-added visually-hidden">
+            <button class="btn btn-light cart-dec">-</button>
+            <span class="cart-count">0 шт.</span>
+            <button class="btn btn-light cart-inc">+</button>
+        </div>
+        <div class="cart-showed">
+            <button class="btn btn-primary cart-add">В корзину</button>
+        </div>
+    </div>
+</div>
+</body>
+</html>

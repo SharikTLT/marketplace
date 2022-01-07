@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <!--/*  Each token will be replaced by their respective titles in the resulting page. */-->
+    <title layout:title-pattern="$LAYOUT_TITLE - $CONTENT_TITLE">Marketplace</title>
+    <link href="/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<!--/* Standard layout can be mixed with Layout Dialect
+<div th:replace="fragments/header :: header"></div>
+*/-->
+<nav class="navbar">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/product/">Marketplace</a>
+
+        <div>
+            <a href="#" class="btn btn-outline-primary position-relative me-3">Корзина<span id="cart-totals"
+                                                                                            class="visually-hidden position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">99+</span></a>
+
+            <a href="#" class="btn btn-outline-secondary position-relative me-3">Вход</a>
+        </div>
+    </div>
+</nav>
+<div class="p-2">
+    <!--/* Заменяем содержимое из фрагмента представления */-->
+    <h2 id="page-title" layout:fragment="title"></h2>
+</div>
+<div class="text-center p-2">
+    <!--/* Заменяем элемент содержимым фрагмента  путь до фрагмента :: имя фрагмента в файле */-->
+    <div class="navbar" th:replace="fragments/breadcrumbs :: breadcrumbs"></div>
+    <!--/* Заменяем содержимое из фрагмента представления */-->
+    <div class="content" layout:fragment="content"></div>
+    <!--/* Заменяем элемент содержимым фрагмента  путь до фрагмента :: имя фрагмента в файле */-->
+    <div class="footer" th:replace="fragments/footer :: footer"></div>
+</div>
+<script src="/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="/jquery/jquery-3.6.0.min.js"></script>
+<script src="/js/cart.js"></script>
+</body>
+</html>

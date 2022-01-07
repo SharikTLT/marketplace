@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}"
+>
+<head>
+    <title th:text="${product.name}"></title>
+</head>
+<body>
+<h2 layout:fragment="title" th:text="${product.name}"></h2>
+<div layout:fragment="content" class="text-start">
+    <a class="btn btn-outline-primary m-1" href="/product/">Back to list</a>
+    <div class="card text-center" th:attr="data-id=${product.id}">
+        <div class="card-body">
+            <h5 th:text="${product.name}">Title</h5>
+            <h6 th:text="${product.basePrice}">Sub title</h6>
+            <p class="card-text" th:text="${product.desc}">description would be here</p>
+            <!--/* Заменяем элемент содержимым фрагмента  путь до фрагмента :: имя фрагмента в файле */-->
+            <div th:replace="fragments/cart :: cartItem(${product.id})" ></div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,9 +1,34 @@
-!DOCTYPE html>
+<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}"
 >
-<head>Product index</head>
+<!--/* layout:decorate говорит какой шаблон страницы мы используем для отрисовки текущего вью */-->
+<head>
+    <title>Product list</title>
+</head>
 <body>
-
+<!--/* Указываем содержимое для фрагмента title */-->
+<h2 layout:fragment="title">Products list</h2>
+<!--/* Указываем содержимое для фрагмента content */-->
+<div layout:fragment="content">
+    <div class="product-list row row-cols-1 row-cols-md-5 g-4">
+        <div th:each="product: ${productList}" class="col">
+            <div class="card" th:attr="data-id=${product.id}">
+                <div class="card-body">
+                    <a th:href="@{/product/{id}/view(id=${product.id})}">
+                        <h5 th:text="${product.name}">Title</h5>
+                    </a>
+                    <h6 th:text="${product.basePrice}">Sub title</h6>
+                    <a th:href="@{/product/{id}/view(id=${product.id})}">
+                    <p class="card-text" th:text="${product.desc}"></p>
+                    </a>
+                    <!--/* Заменяем элемент содержимым фрагмента  путь до фрагмента :: имя фрагмента в файле */-->
+                    <div th:replace="fragments/cart :: cartItem(${product.id})" ></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>

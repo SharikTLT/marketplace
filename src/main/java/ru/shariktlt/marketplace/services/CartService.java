@@ -8,10 +8,15 @@ import ru.shariktlt.marketplace.model.Product;
 import ru.shariktlt.marketplace.storage.repository.CartItemRepository;
 import ru.shariktlt.marketplace.storage.repository.ProductRepository;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class CartService {
+
+    @Autowired
+    private PriceFormatterService priceFormatterService;
 
     @Autowired
     private CartItemRepository repository;
@@ -44,8 +49,14 @@ public class CartService {
         repository.deleteById(new CartItem.CartItemId(cartId, product.getId()));
     }
 
-    public void removeAll(String cartId) {
+    public void remove(String cartId, List<Long> productIds) {
+        List<CartItem.CartItemId> pkList = productIds.stream()
+                .map(pId -> new CartItem.CartItemId(cartId, pId))
+                .collect(Collectors.toList());
+        repository.deleteAllById(pkList);
+    }
 
+    public void removeAll(String cartId) {
         repository.deleteAllByPkId(cartId);
     }
 

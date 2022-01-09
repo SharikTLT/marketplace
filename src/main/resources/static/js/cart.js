@@ -2,6 +2,7 @@ var cart = {
   HIDE_CLASS: 'visually-hidden',
   URL_CART_SET: '/rest/cart/set',
   URL_CART_REMOVE: '/rest/cart/remove',
+  URL_CART_CLEAR: '/rest/cart/clear',
 
   /*
   * Инициализируем исходные значения и подключаем слушатели
@@ -18,7 +19,76 @@ var cart = {
       container.find('.cart-dec').click(function(el){ $this.decCart(itemId);});
     });
 
+
+    if($('#confirmModal').length == 1){
+      this.initModal();
+    }else{
+      console.log('no modal');
+    }
+
     this.getInfo();
+  },
+
+  /*
+  * инициализируем модальное окно для подтверждения удаления
+  */
+  initModal: function(){
+    this.modal = $('#confirmModal');
+    this.modalHandler = bootstrap.Modal.getOrCreateInstance(this.modal);
+    var $this = this;
+    $('.cart-clear').click(function(event){
+      var el = $(event.currentTarget);
+      var isAll = el.hasClass('cart-clear-all');
+      $this.modal.find('#confirm-text').html(el.data('text'));
+      $this.modal.find('#confirm-ok').unbind().click(function(){
+        $this.modalHandler.hide();
+        $this.clearItems(isAll);
+      });
+      $this.modalHandler.show();
+      return false;
+    });
+  },
+
+  /*
+  * Удаляем только выбранные элементы
+  */
+  clearItems: function(isAll){
+    if(isAll){
+      return this.clearItemsAll();
+    }
+    var ids = [];
+    $('.cart-id-select:checkbox:checked').each(function(i, el){
+
+      ids.push(Number.parseInt($(el).data('id')));
+    });
+    return this.clearItemsSelected(ids);
+  },
+
+  /*
+  * Удаляем все элементы
+  */
+  clearItemsAll: function() {
+    this.sendCartRequest(this.URL_CART_CLEAR);
+  },
+
+  /*
+  * Проверяем, если в ответе корзины нет элементов, то перезагружаемся
+  * вызывать должны только на странице с корзиной
+  */
+  checkAllItemsRemoved: function(res) {
+    if(res.items.length == 0 && window.location.pathname.startsWith('/cart/')){
+      window.location.reload();
+    }
+  },
+
+  /*
+  * Делаем вызов для удаления только выбранных элементов
+  */
+  clearItemsSelected: function(ids){
+    this.sendCartRequest(
+      this.URL_CART_REMOVE,
+      {productIds: ids}
+    );
   },
 
   /*
@@ -44,16 +114,17 @@ var cart = {
     this.lastTsUpdate = ts;
     this.lastCart = cart;
     console.log("CartResp: ", cart);
-    this.setBadge(cart.length);
+    this.setBadge(cart.items.length);
     this.cartMap = {}
-    for(var item of cart){
+    for(var item of cart.items){
       this.cartMap[item.product.id.toString()] = item;
     }
+    this.checkAllItemsRemoved(cart);
     this.updateCartHandlers();
   },
 
   /*
-  * обновляем кнопки корзины у товаров на странице
+  * обновляем кнопки корзины у товаров на странице и элементы в списке корзины
   */
   updateCartHandlers: function(){
     var $this = this;
@@ -70,7 +141,26 @@ var cart = {
         el.find('.cart-showed').removeClass($this.HIDE_CLASS);
         console.log("hide item")
       }
-    })
+    });
+    /* обновляем суммы в списке корзины или удаляем строку если уже убрали из корзины */
+    $('.cart-list-item').each(function(i, el){
+      el = $(el);
+      var itemId = el.data('id');
+      var item = $this.cartMap[itemId];
+      if(item == undefined){
+        el.remove();
+      }else{
+        el.find('.item-count-price').html(item.formattedSum);
+      }
+    });
+
+    /* обновляем итоговую сумму всей корзины, если объект на странице то проверяем,
+     * если корзина пуста, значит обновляем страницу
+     */
+    var totalCartSum = $('.cart-total-summ > span');
+    if(totalCartSum[0] != undefined){
+      $('.cart-total-summ > span').html(this.lastCart.formattedSum);
+    }
   },
 
   /*
@@ -155,13 +245,16 @@ var cart = {
   /*
   * обертка для вызова ajax выбирает GET/POST при наличии аргумента data
   */
-  sendCartRequest: function(url, data){
+  sendCartRequest: function(url, data, callback){
       var $this = this;
       var params = {
         url: url,
         type: 'GET',
         dataType: "json",
         success: function(res) {
+          if(typeof callback == 'function'){
+            return callback(res);
+          }
           $this.handleCartResp(res);
         },
         error: function(xhr, status, err){
@@ -170,7 +263,7 @@ var cart = {
         }
       }
 
-      if(data !== null){
+      if(data instanceof Object){
         params.type = 'POST';
         params.contentType = 'application/json; charset=utf-8';
         params.data = JSON.stringify(data);

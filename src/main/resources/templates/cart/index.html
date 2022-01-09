@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}"
+>
+<!--/* layout:decorate говорит какой шаблон страницы мы используем для отрисовки текущего вью */-->
+<head>
+    <title>Cart</title>
+</head>
+<body>
+<!--/* Указываем содержимое для фрагмента title */-->
+<h2 layout:fragment="title">Cart</h2>
+<!--/* Указываем содержимое для фрагмента content */-->
+<div layout:fragment="content">
+
+    <div class="empty-cart" th:if="${cartItems.isEmpty()}">
+        <h1>Cart is empty</h1>
+        <a class="btn btn-primary" href="/product/">Back to list</a>
+    </div>
+
+    <div class="full-cart" th:unless="${cartItems.isEmpty()}">
+        <div class="text-start m-3">
+            <a class="cart-clear btn btn-light" href="#clearCart" data-text="Действительно удалить выбранные?">Удалить
+                выбранные</a>
+            <a class="cart-clear cart-clear-all btn btn-danger ms-3" href="#clearCart"
+               data-text="Действительно удалить все?">Удалить все</a>
+        </div>
+        <div class="cart-items text-start p-3">
+            <div th:each="cartItem: ${cartItems}" class="row cart-list-item" th:attr="data-id=${cartItem.product.id}">
+                <div class="col-1" style="max-width: 50px">
+                    <input type="checkbox" class="form-check-input cart-id-select"
+                           th:attr="data-id=${cartItem.product.id}"/></div>
+                <div class="col-7">
+                    <a th:href="@{/product/{id}/view(id=${cartItem.product.id})}">
+                        <h5 th:text="${cartItem.product.name}">Title</h5>
+                    </a>
+                    <h6 th:text="${cartItem.product.basePrice}">Sub
+                        title</h6>
+
+                </div>
+                <div class="col-1 row align-items-center">
+                    <h6 class="item-count-price" th:text="${cartItem.product.basePrice * cartItem.count}">Sub
+                        title</h6>
+                </div>
+                <div class="col-3">
+                    <div class="position-relative" th:insert="fragments/cart :: cartItem(${cartItem.product.id})"></div>
+                </div>
+            </div>
+        </div>
+        <div class="to-order text-end mx-5 my-3">
+            <div class="cart-total-summ">
+                Заказ на сумму: <span class="fw-bold" th:text="${cartItemsSum}"></span>
+            </div>
+            <a class="btn btn-success" href="/order/new">Перейти к оформлению</a>
+        </div>
+        <div id="confirmModal" class="modal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p id="confirm-text"></p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                        <button type="button" class="btn btn-primary" id="confirm-ok">Да</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+</body>
+</html>
